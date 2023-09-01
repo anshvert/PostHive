@@ -13,14 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@mikro-orm/core");
-const Post_1 = require("./entities/Post");
 const micro_orm_config_1 = __importDefault(require("./micro-orm.config"));
-const main = () => __awaiter(void 0, void 0, void 0, function* () {
+(() => __awaiter(void 0, void 0, void 0, function* () {
     const orm = yield core_1.MikroORM.init(micro_orm_config_1.default);
-    yield orm.getMigrator().up();
-    const ormFork = orm.em.fork();
-    const posts = yield ormFork.find(Post_1.Post, {});
-    console.log(posts);
-});
-main().then().catch();
-//# sourceMappingURL=index.js.map
+    const migrator = orm.getMigrator();
+    yield migrator.createMigration();
+    yield orm.close(true);
+}))();
+//# sourceMappingURL=migrate.js.map
