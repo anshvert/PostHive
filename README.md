@@ -36,7 +36,7 @@ This project is a Reddit-inspired web application built using modern web technol
 
 ## Setup and Usage
 
-1. **Clone the Repository:** `git clone https://github.com/yourusername/reddit-clone.git`
+1. **Clone the Repository:** `git clone https://github.com/yourusername/PostHive.git`
 
 2. **Install Dependencies:** In both the client and server directories, run `npm install` or `yarn install` to install project dependencies.
 
