@@ -2,6 +2,7 @@ import {__prod__} from "./constants";
 import {Post} from "./entities/Post";
 import {MikroORM} from "@mikro-orm/core";
 import path from "path";
+import {User} from "./entities/User";
 
 export default {
     migrations: {
@@ -11,7 +12,7 @@ export default {
     dbName: "posthive",
     type: "postgresql",
     debug: !__prod__,
-    entities: [Post],
+    entities: [Post,User],
     password: "ansh2222"
 } as Parameters<typeof MikroORM.init>[0]
 

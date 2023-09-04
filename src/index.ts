@@ -6,6 +6,7 @@ import {ApolloServer, ExpressContext} from "apollo-server-express";
 import {buildSchema} from "type-graphql";
 import {HelloResolver} from "./resolvers/hello";
 import {PostResolver} from "./resolvers/post";
+import {UserResolver} from "./resolvers/user";
 
 const main = async (): Promise<void> => {
     const orm: MikroORM<IDatabaseDriver<Connection>> = await MikroORM.init(microConfig)
@@ -15,7 +16,7 @@ const main = async (): Promise<void> => {
     const app: Express = express()
     const apolloServer: ApolloServer<ExpressContext> = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver,PostResolver],
+            resolvers: [HelloResolver,PostResolver,UserResolver],
             validate: false
         }),
         context: () => ({em: ormFork})
