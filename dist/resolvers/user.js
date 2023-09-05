@@ -92,7 +92,7 @@ let UserResolver = class UserResolver {
             return { user };
         });
     }
-    login(options, { em }) {
+    login(options, { em, req }) {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield em.findOne(User_1.User, { username: options.username });
             if (!user) {

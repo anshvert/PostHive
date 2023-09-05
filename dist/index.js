@@ -21,17 +21,44 @@ const type_graphql_1 = require("type-graphql");
 const hello_1 = require("./resolvers/hello");
 const post_1 = require("./resolvers/post");
 const user_1 = require("./resolvers/user");
+const connect_redis_1 = __importDefault(require("connect-redis"));
+const express_session_1 = __importDefault(require("express-session"));
+const redis_1 = require("redis");
+const cors_1 = __importDefault(require("cors"));
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const orm = yield core_1.MikroORM.init(micro_orm_config_1.default);
     yield orm.getMigrator().up();
     const ormFork = orm.em.fork();
     const app = (0, express_1.default)();
+    let redisClient = (0, redis_1.createClient)();
+    redisClient.connect().catch(console.error);
+    let redisStore = new connect_redis_1.default({
+        client: redisClient,
+        disableTouch: true,
+    });
+    app.use((0, cors_1.default)({
+        origin: ["http://localhost:4000", "https://studio.apollographql.com"],
+        credentials: true,
+    }));
+    app.use((0, express_session_1.default)({
+        name: "quid",
+        store: redisStore,
+        resave: false,
+        saveUninitialized: false,
+        secret: "random stuff for secret key",
+        cookie: {
+            maxAge: 60 * 60 * 24 * 365 * 1000,
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        }
+    }));
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: yield (0, type_graphql_1.buildSchema)({
             resolvers: [hello_1.HelloResolver, post_1.PostResolver, user_1.UserResolver],
-            validate: false
+            validate: false,
         }),
-        context: () => ({ em: ormFork })
+        context: ({ req, res }) => ({ em: ormFork, req, res })
     });
     yield apolloServer.start();
     apolloServer.applyMiddleware({ app });

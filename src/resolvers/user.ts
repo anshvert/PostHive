@@ -3,6 +3,12 @@ import {MyContext} from "../types";
 import {User} from "../entities/User";
 import argon2 from "argon2"
 
+declare module 'express-session' {
+    interface Session {
+        userId: number;
+    }
+}
+
 @InputType()
 class UsernamePasswordInput {
     @Field()
@@ -32,7 +38,7 @@ export class UserResolver {
     @Mutation(() => UserResponse)
     async register(
         @Arg('options') options: UsernamePasswordInput,
-        @Ctx() {em}: MyContext
+        @Ctx() { em }: MyContext
     ): Promise<UserResponse> {
         if (options.username.length <= 2) {
             return {
@@ -58,7 +64,7 @@ export class UserResolver {
     @Mutation(() => UserResponse)
     async login(
         @Arg('options') options: UsernamePasswordInput,
-        @Ctx() {em}: MyContext
+        @Ctx() {em, req }: MyContext
     ): Promise<UserResponse> {
         const user = await em.findOne(User,{username: options.username })
         if (!user) {
@@ -78,6 +84,7 @@ export class UserResolver {
                 }]
             }
         }
+        //req.session.userId = user.id
         return {user}
     }
 }
