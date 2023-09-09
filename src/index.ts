@@ -36,7 +36,7 @@ const main = async (): Promise<void> => {
             name: "quid",
             store: redisStore,
             resave: false, // required: force lightweight session keep alive (touch)
-            saveUninitialized: false, // recommended: only save session when data exist
+            saveUninitialized: false, // recommended: only save session when data exists
             secret: "random stuff for secret key",
             cookie: {
                 maxAge: 60*60*24*365*1000, // 1 Year
