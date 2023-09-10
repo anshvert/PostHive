@@ -1,56 +1,52 @@
 import React from "react"
 import {useState} from "react"
-import Link from "next/link";
-import {Stack} from "@mui/system";
 import {TextField,Button} from "@mui/material";
+import Box from "@mui/material/Box";
 
 export type registerProps = {}
+const REGISTER_MUT = `
+    mutation Register($options: UsernamePasswordInput!) {
+      register(options: {username: "ansh2", password: "ansh"}) {
+        user {
+          id
+        }
+      }
+    }`
 
 const Register: React.FC<registerProps> = () => {
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    //const [,] = useMutation(REGISTER_MUT)
+    const [username, setUsername] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
 
-    function handleSubmit(event) {
+    async function handleSubmit(event: any): Promise<any> {
         event.preventDefault();
-        console.log(firstName, lastName, email, password)
+        console.log(username,password)
     }
-
     return (
         <React.Fragment>
-            <div>
+            <Box sx={{
+                    width: 600,
+                    height: 400,
+                    backgroundColor: 'white',
+                    m: 'auto',
+                    position: "absolute",
+                    top: '20%',
+                    left: '30%',
+                    '&:hover': {
+                        backgroundColor: 'white',
+                        opacity: [0.9, 0.8, 0.7],
+                        borderBottom: 1,
+                        borderColor: "grey.500"
+                    }}}>
                 <h2>Register Form</h2>
                 <form onSubmit={handleSubmit}>
-                    <Stack spacing={2} direction="row" sx={{marginBottom: 4}}>
-                        <TextField
-                            type="text"
-                            variant='outlined'
-                            color='secondary'
-                            label="First Name"
-                            onChange={e => setFirstName(e.target.value)}
-                            value={firstName}
-                            fullWidth
-                            required
-                        />
-                        <TextField
-                            type="text"
-                            variant='outlined'
-                            color='secondary'
-                            label="Last Name"
-                            onChange={e => setLastName(e.target.value)}
-                            value={lastName}
-                            fullWidth
-                            required
-                        />
-                    </Stack>
                     <TextField
-                        type="email"
+                        type="username"
                         variant='outlined'
                         color='secondary'
-                        label="Email"
-                        onChange={e => setEmail(e.target.value)}
-                        value={email}
+                        label="Username"
+                        onChange={e => setUsername(e.target.value)}
+                        value={username}
                         fullWidth
                         required
                         sx={{mb: 4}}
@@ -69,7 +65,7 @@ const Register: React.FC<registerProps> = () => {
                     <Button variant="outlined" color="secondary" type="submit">Register</Button>
                 </form>
                 {/*<small>Already have an account? <Link to="/login">Login Here</Link></small>*/}
-            </div>
+            </Box>
         </React.Fragment>
     )
 }
