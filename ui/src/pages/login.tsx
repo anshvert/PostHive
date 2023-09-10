@@ -2,47 +2,48 @@ import React from "react"
 import {useState} from "react"
 import {TextField,Button} from "@mui/material";
 import Box from "@mui/material/Box";
-import {useMutation, UseMutationExecute} from "urql";
-import {REGISTER_MUT} from "@/graphql/mutations";
+import {useMutation} from "urql";
+import {LOGIN_MUT} from "@/graphql/mutations";
 import {NextRouter, useRouter} from "next/router";
 
-export type registerProps = {}
+export type loginProps = {}
 
-const Register: React.FC<registerProps> = () => {
-    const [,register] = useMutation(REGISTER_MUT)
+const Login: React.FC<loginProps> = () => {
+    const [,login] = useMutation(LOGIN_MUT)
     const router: NextRouter = useRouter()
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
 
-    async function handleSubmit(event: any): Promise<any> {
+    async function handleSubmit(event: any): Promise<undefined> {
         event.preventDefault();
         const options = {"username":username,"password":password}
-        const response = await register(options);
-        if (response.data?.register.errors?.length) {
-            alert(`${response.data?.register.errors[0].message}`)
+        const response = await login(options);
+        if (response.data?.login.errors?.length) {
+            alert(`${response.data?.login.errors[0].message}`)
         } else if (!response.data) {
             alert(`Something went Wrong !!`)
         } else {
             await router.push("/")
         }
+        return
     }
     return (
         <React.Fragment>
             <Box sx={{
-                    width: 600,
-                    height: 400,
+                width: 600,
+                height: 400,
+                backgroundColor: 'white',
+                m: 'auto',
+                position: "absolute",
+                top: '20%',
+                left: '30%',
+                '&:hover': {
                     backgroundColor: 'white',
-                    m: 'auto',
-                    position: "absolute",
-                    top: '20%',
-                    left: '30%',
-                    '&:hover': {
-                        backgroundColor: 'white',
-                        opacity: [0.9, 0.8, 0.7],
-                        borderBottom: 1,
-                        borderColor: "grey.500"
-                    }}}>
-                <h2>Register Form</h2>
+                    opacity: [0.9, 0.8, 0.7],
+                    borderBottom: 1,
+                    borderColor: "grey.500"
+                }}}>
+                <h2>Login Form</h2>
                 <form onSubmit={handleSubmit}>
                     <TextField
                         type="username"
@@ -73,4 +74,4 @@ const Register: React.FC<registerProps> = () => {
         </React.Fragment>
     )
 }
-export default Register
+export default Login
