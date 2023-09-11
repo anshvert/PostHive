@@ -17,8 +17,10 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import NextLink from "next/link"
 import {useState} from "react";
-import {useSelector} from "react-redux";
-import {selectLoginState} from "@/store/loginSlice";
+import {useDispatch, useSelector} from "react-redux";
+import {selectLoginState, setLoginState} from "@/store/loginSlice";
+import {Button} from "@mui/material";
+import {AnyAction, Dispatch} from "redux";
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -68,6 +70,7 @@ export const NavBar: React.FC<NavBarProps> = () => {
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
     const loginState : boolean = useSelector(selectLoginState);
+    const dispatch: Dispatch<AnyAction> = useDispatch();
 
     const isMenuOpen: boolean = Boolean(anchorEl);
     const isMobileMenuOpen: boolean = Boolean(mobileMoreAnchorEl);
@@ -234,17 +237,24 @@ export const NavBar: React.FC<NavBarProps> = () => {
                     {/*    </IconButton>*/}
                     {/*</Box>*/}
                     { !loginState && <NextLink href={"/login"}>
-                        <Typography variant={`h6`} noWrap component={`button`} sx={{ display: { xs: 'none', md: 'flex' }, marginLeft: "20px" }}>
-                            Login
-                        </Typography>
-                    </NextLink> }
+                            <Typography variant={`h6`} noWrap component={`button`} sx={{ display: { xs: 'none', md: 'flex' }, marginLeft: "20px" }}>
+                                Login
+                            </Typography>
+                        </NextLink> }
                     { !loginState &&
                         <NextLink href={"/register"}>
-                    <Typography variant={`h6`} noWrap component={`button`} sx={{ display: { xs: 'none', md: 'flex' }, marginLeft: "20px" }}>
-                        Register
-                    </Typography>
-                </NextLink> }
-
+                            <Typography variant={`h6`} noWrap component={`button`} sx={{ display: { xs: 'none', md: 'flex' }, marginLeft: "20px" }}>
+                                Register
+                            </Typography>
+                        </NextLink> }
+                    { loginState &&
+                        <Button onClick={() => dispatch(setLoginState(false)) }>
+                            <NextLink href={"/"}>
+                                <Typography variant={`h6`} noWrap component={`button`} sx={{ display: { xs: 'none', md: 'flex' }, marginLeft: "20px" }}>
+                                    Logout
+                                </Typography>
+                            </NextLink>
+                        </Button>}
                 </Toolbar>
             </AppBar>
             {renderMobileMenu}
