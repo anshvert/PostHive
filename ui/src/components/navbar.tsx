@@ -15,6 +15,11 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import NextLink from "next/link"
+import {useState} from "react";
+import {useSelector} from "react-redux";
+import {selectLoginState} from "@/store/loginSlice";
+
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -56,13 +61,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-export const NavBar = () => {
+
+interface NavBarProps  {}
+export const NavBar: React.FC<NavBarProps> = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
+    const loginState : boolean = useSelector(selectLoginState);
 
-    const isMenuOpen = Boolean(anchorEl);
-    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+    const isMenuOpen: boolean = Boolean(anchorEl);
+    const isMobileMenuOpen: boolean = Boolean(mobileMoreAnchorEl);
 
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -213,18 +221,30 @@ export const NavBar = () => {
                             <AccountCircle />
                         </IconButton>
                     </Box>
-                    <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="show more"
-                            aria-controls={mobileMenuId}
-                            aria-haspopup="true"
-                            onClick={handleMobileMenuOpen}
-                            color="inherit"
-                        >
-                            <MoreIcon />
-                        </IconButton>
-                    </Box>
+                    {/*<Box sx={{ display: { xs: 'flex', md: 'none' } }}>*/}
+                    {/*    <IconButton*/}
+                    {/*        size="large"*/}
+                    {/*        aria-label="show more"*/}
+                    {/*        aria-controls={mobileMenuId}*/}
+                    {/*        aria-haspopup="true"*/}
+                    {/*        onClick={handleMobileMenuOpen}*/}
+                    {/*        color="inherit"*/}
+                    {/*    >*/}
+                    {/*        <MoreIcon />*/}
+                    {/*    </IconButton>*/}
+                    {/*</Box>*/}
+                    { !loginState && <NextLink href={"/login"}>
+                        <Typography variant={`h6`} noWrap component={`button`} sx={{ display: { xs: 'none', md: 'flex' }, marginLeft: "20px" }}>
+                            Login
+                        </Typography>
+                    </NextLink> }
+                    { !loginState &&
+                        <NextLink href={"/register"}>
+                    <Typography variant={`h6`} noWrap component={`button`} sx={{ display: { xs: 'none', md: 'flex' }, marginLeft: "20px" }}>
+                        Register
+                    </Typography>
+                </NextLink> }
+
                 </Toolbar>
             </AppBar>
             {renderMobileMenu}

@@ -5,6 +5,9 @@ import Box from "@mui/material/Box";
 import {useMutation} from "urql";
 import {LOGIN_MUT} from "@/graphql/mutations";
 import {NextRouter, useRouter} from "next/router";
+import { selectLoginState, setLoginState } from "@/store/loginSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {AnyAction, Dispatch} from "redux";
 
 export type loginProps = {}
 
@@ -13,6 +16,8 @@ const Login: React.FC<loginProps> = () => {
     const router: NextRouter = useRouter()
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
+    const loginState : boolean = useSelector(selectLoginState);
+    const dispatch: Dispatch<AnyAction> = useDispatch();
 
     async function handleSubmit(event: any): Promise<undefined> {
         event.preventDefault();
@@ -23,6 +28,7 @@ const Login: React.FC<loginProps> = () => {
         } else if (!response.data) {
             alert(`Something went Wrong !!`)
         } else {
+            dispatch(setLoginState(true))
             await router.push("/")
         }
         return
@@ -67,7 +73,7 @@ const Login: React.FC<loginProps> = () => {
                         fullWidth
                         sx={{mb: 4}}
                     />
-                    <Button variant="outlined" color="secondary" type="submit">Register</Button>
+                    <Button variant="outlined" color="secondary" type="submit">Login</Button>
                 </form>
                 {/*<small>Already have an account? <Link to="/login">Login Here</Link></small>*/}
             </Box>
