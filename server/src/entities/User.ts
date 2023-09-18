@@ -14,6 +14,10 @@ export class User {
     username!: string;
 
     @Field()
+    @Property( { type: "email",unique: true })
+    email!: string;
+
+    @Field()
     @Property()
     createdAt: Date = new Date()
 

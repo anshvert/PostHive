@@ -2,12 +2,8 @@ import {Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver} from 
 import {MyContext} from "../types";
 import {User} from "../entities/User";
 import argon2 from "argon2"
-
-// declare module 'express-session' {
-//     interface Session {
-//         userId: number;
-//     }
-// }
+import {sendEmail} from "../utils/sendEmail";
+import {v4} from "uuid";
 
 @InputType()
 class UsernamePasswordInput {
@@ -15,6 +11,8 @@ class UsernamePasswordInput {
     username: string
     @Field()
     password: string
+    @Field()
+    email?: string
 }
 
 @ObjectType()
@@ -57,7 +55,7 @@ export class UserResolver {
             }
         }
         const hashedPassword: string = await argon2.hash(options.password)
-        const user: User = em.create(User,{ username: options.username, password: hashedPassword} as User)
+        const user: User = em.create(User,{ username: options.username, password: hashedPassword,email: options.email} as User)
         await em.persistAndFlush(user)
         return {user}
     }
@@ -86,5 +84,19 @@ export class UserResolver {
         }
         //req.session.userId = user.id
         return {user}
+    }
+    @Mutation(() => Boolean)
+    async forgotPassword(
+        @Arg('email') email: string,
+        @Ctx() {em}: MyContext
+    ): Promise<any> {
+        const user = await em.findOne(User,{email: email})
+        if (!user) {
+            return true
+        }
+        const token: string = v4()
+        const forgotPasswordLink: string = `<a href='http://localhost:3000/change-password/${token}'>Reset Password</a>`
+        await sendEmail(email,forgotPasswordLink)
+        return true
     }
 }

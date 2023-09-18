@@ -12,38 +12,34 @@ import session from "express-session"
 import {createClient} from "redis"
 import {__prod__} from "./constants";
 import cors from 'cors'
+import {sendEmail} from "./utils/sendEmail";
+import {User} from "./entities/User";
 
 const main = async (): Promise<void> => {
+    // await sendEmail("ansh@ansh.com","Checking")
     const orm: MikroORM<IDatabaseDriver<Connection>> = await MikroORM.init(microConfig)
     await orm.getMigrator().up()
     const ormFork = orm.em.fork()
     const app: Express = express()
-
     // let redisClient = createClient()
     // redisClient.connect().catch(console.error)
     // let redisStore: RedisStore = new RedisStore({
     //     client: redisClient,
     //     disableTouch: true,
     // })
-    // pages.use(
-    //     cors({
-    //         origin: ["http://localhost:4000", "https://studio.apollographql.com"],
-    //         credentials: true,
-    //     })
-    // );
-    // pages.use(
+    // // app.use(
+    // //     cors({
+    // //         origin: ["http://localhost:4000", "https://studio.apollographql.com"],
+    // //         credentials: true,
+    // //     })
+    // // );
+    // app.use(
     //     session({
     //         name: "quid",
     //         store: redisStore,
     //         resave: false, // required: force lightweight session keep alive (touch)
     //         saveUninitialized: false, // recommended: only save session when data exists
     //         secret: "random stuff for secret key",
-    //         cookie: {
-    //             maxAge: 60*60*24*365*1000, // 1 Year
-    //             httpOnly: true,
-    //             secure: true,
-    //             sameSite: "none"
-    //         }
     //     })
     // )
     const apolloServer: ApolloServer<ExpressContext> = new ApolloServer({

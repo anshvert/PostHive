@@ -31,6 +31,11 @@ __decorate([
 ], User.prototype, "username", void 0);
 __decorate([
     (0, type_graphql_1.Field)(),
+    (0, core_1.Property)({ type: "email", unique: true }),
+    __metadata("design:type", String)
+], User.prototype, "email", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
     (0, core_1.Property)(),
     __metadata("design:type", Date)
 ], User.prototype, "createdAt", void 0);

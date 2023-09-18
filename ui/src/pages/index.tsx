@@ -8,18 +8,19 @@ const Home: React.FC = () =>  {
     const [result, reExecuteQuery] = useQuery({
         query: POST_QUERY,
     });
-
     const { data, fetching, error } = result;
-    if (fetching) return <p>Loading...</p>;
-    if (error) return <p>Oh no... {error.message}</p>;
     return (
         <>
             <NavBar />
-            <ul>
-                {data.posts.map((post: Post) => (
-                    <li key={post.id}>{post.title}</li>
-                ))}
-            </ul>
+            {fetching && <p>Loading...</p>}
+            {error &&  <p>Oh no... {error.message}</p>}
+            {!error && !fetching &&
+                <ul>
+                    {data.posts.map((post: Post) => (
+                        <li key={post.id}>{post.title}</li>
+                    ))}
+                </ul>
+            }
         </>
     );
 }

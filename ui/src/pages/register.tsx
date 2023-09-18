@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import {useMutation, UseMutationExecute} from "urql";
 import {REGISTER_MUT} from "@/graphql/mutations";
 import {NextRouter, useRouter} from "next/router";
+import {User, userInputEvent} from "@/utils/types";
 
 export type registerProps = {}
 
@@ -13,10 +14,11 @@ const Register: React.FC<registerProps> = () => {
     const router: NextRouter = useRouter()
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
+    const [email, setEmail] = useState<string>("")
 
     async function handleSubmit(event: any): Promise<any> {
         event.preventDefault();
-        const options = {"username":username,"password":password}
+        const options: User = {"username":username,"password":password,"email": email}
         const response = await register(options);
         if (response.data?.register.errors?.length) {
             alert(`${response.data?.register.errors[0].message}`)
@@ -49,8 +51,19 @@ const Register: React.FC<registerProps> = () => {
                         variant='outlined'
                         color='secondary'
                         label="Username"
-                        onChange={e => setUsername(e.target.value)}
+                        onChange={(e: userInputEvent) => setUsername(e.target.value)}
                         value={username}
+                        fullWidth
+                        required
+                        sx={{mb: 4}}
+                    />
+                    <TextField
+                        type="email"
+                        variant='outlined'
+                        color='secondary'
+                        label="Email"
+                        onChange={(e: userInputEvent) => setEmail(e.target.value)}
+                        value={email}
                         fullWidth
                         required
                         sx={{mb: 4}}
@@ -60,7 +73,7 @@ const Register: React.FC<registerProps> = () => {
                         variant='outlined'
                         color='secondary'
                         label="Password"
-                        onChange={e => setPassword(e.target.value)}
+                        onChange={(e: userInputEvent) => setPassword(e.target.value)}
                         value={password}
                         required
                         fullWidth

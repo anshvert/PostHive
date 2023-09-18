@@ -28,6 +28,8 @@ exports.UserResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const User_1 = require("../entities/User");
 const argon2_1 = __importDefault(require("argon2"));
+const sendEmail_1 = require("../utils/sendEmail");
+const uuid_1 = require("uuid");
 let UsernamePasswordInput = class UsernamePasswordInput {
 };
 __decorate([
@@ -38,6 +40,10 @@ __decorate([
     (0, type_graphql_1.Field)(),
     __metadata("design:type", String)
 ], UsernamePasswordInput.prototype, "password", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", String)
+], UsernamePasswordInput.prototype, "email", void 0);
 UsernamePasswordInput = __decorate([
     (0, type_graphql_1.InputType)()
 ], UsernamePasswordInput);
@@ -87,7 +93,7 @@ let UserResolver = class UserResolver {
                 };
             }
             const hashedPassword = yield argon2_1.default.hash(options.password);
-            const user = em.create(User_1.User, { username: options.username, password: hashedPassword });
+            const user = em.create(User_1.User, { username: options.username, password: hashedPassword, email: options.email });
             yield em.persistAndFlush(user);
             return { user };
         });
@@ -115,6 +121,18 @@ let UserResolver = class UserResolver {
             return { user };
         });
     }
+    forgotPassword(email, { em }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield em.findOne(User_1.User, { email: email });
+            if (!user) {
+                return true;
+            }
+            const token = (0, uuid_1.v4)();
+            const forgotPasswordLink = `<a href='http://localhost:3000/change-password/${token}'>Reset Password</a>`;
+            yield (0, sendEmail_1.sendEmail)(email, forgotPasswordLink);
+            return true;
+        });
+    }
 };
 exports.UserResolver = UserResolver;
 __decorate([
@@ -133,6 +151,14 @@ __decorate([
     __metadata("design:paramtypes", [UsernamePasswordInput, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "login", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => Boolean),
+    __param(0, (0, type_graphql_1.Arg)('email')),
+    __param(1, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "forgotPassword", null);
 exports.UserResolver = UserResolver = __decorate([
     (0, type_graphql_1.Resolver)()
 ], UserResolver);

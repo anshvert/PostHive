@@ -8,6 +8,7 @@ import {NextRouter, useRouter} from "next/router";
 import { selectLoginState, setLoginState } from "@/store/loginSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {AnyAction, Dispatch} from "redux";
+import {User} from "@/utils/types";
 
 export type loginProps = {}
 
@@ -16,12 +17,13 @@ const Login: React.FC<loginProps> = () => {
     const router: NextRouter = useRouter()
     const [username, setUsername] = useState<string>('')
     const [password, setPassword] = useState<string>('')
+    const [email, setEmail] = useState<string>("")
     const loginState : boolean = useSelector(selectLoginState);
     const dispatch: Dispatch<AnyAction> = useDispatch();
 
     async function handleSubmit(event: any): Promise<undefined> {
         event.preventDefault();
-        const options = {"username":username,"password":password}
+        const options: User = {"username":username,"password":password,"email": email}
         const response = await login(options);
         if (response.data?.login.errors?.length) {
             alert(`${response.data?.login.errors[0].message}`)
