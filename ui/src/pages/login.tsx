@@ -1,6 +1,6 @@
 import React from "react"
 import {useState} from "react"
-import {TextField,Button} from "@mui/material";
+import {TextField,Button, Link} from "@mui/material";
 import Box from "@mui/material/Box";
 import {useMutation} from "urql";
 import {LOGIN_MUT} from "@/graphql/mutations";
@@ -9,6 +9,7 @@ import { selectLoginState, setLoginState } from "@/store/loginSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {AnyAction, Dispatch} from "redux";
 import {User} from "@/utils/types";
+import NextLink from "next/link"
 
 export type loginProps = {}
 
@@ -36,18 +37,19 @@ const Login: React.FC<loginProps> = () => {
         return
     }
     return (
-        <React.Fragment>
+        <>
             <Box sx={{
                 width: 600,
-                height: 400,
+                height: 300,
                 backgroundColor: 'white',
                 m: 'auto',
                 position: "absolute",
                 top: '20%',
                 left: '30%',
+                opacity: [0.9, 0.8, 0.7],
                 '&:hover': {
                     backgroundColor: 'white',
-                    opacity: [0.9, 0.8, 0.7],
+                    opacity: [1, 1, 1],
                     borderBottom: 1,
                     borderColor: "grey.500"
                 }}}>
@@ -76,10 +78,13 @@ const Login: React.FC<loginProps> = () => {
                         sx={{mb: 4}}
                     />
                     <Button variant="outlined" color="secondary" type="submit">Login</Button>
+                    <NextLink href={"/forgot-password"}>
+                        <Button variant="outlined" color="primary" style={{marginLeft: 10}}>Forgot Password</Button>
+                    </NextLink>
                 </form>
                 {/*<small>Already have an account? <Link to="/login">Login Here</Link></small>*/}
             </Box>
-        </React.Fragment>
+        </>
     )
 }
 export default Login

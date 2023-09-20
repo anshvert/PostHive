@@ -85,18 +85,57 @@ export class UserResolver {
         //req.session.userId = user.id
         return {user}
     }
-    @Mutation(() => Boolean)
+    @Mutation(() => UserResponse)
     async forgotPassword(
         @Arg('email') email: string,
         @Ctx() {em}: MyContext
-    ): Promise<any> {
+    ): Promise<UserResponse> {
         const user = await em.findOne(User,{email: email})
         if (!user) {
-            return true
+            return {
+                errors: [
+                    {
+                        field: "email",
+                        message: "No user with this email exists!"
+                    }
+                ]
+            }
         }
         const token: string = v4()
         const forgotPasswordLink: string = `<a href='http://localhost:3000/change-password/${token}'>Reset Password</a>`
         await sendEmail(email,forgotPasswordLink)
-        return true
+        return { user }
+    }
+    @Mutation(() => UserResponse)
+    async changePassword(
+        @Arg('email') email: string,
+        @Arg('newPassword') newPassword: string,
+        @Arg('token') token: string,
+        @Ctx() {em}: MyContext
+    ): Promise<UserResponse> {
+        if (newPassword.length <= 2) {
+            return {
+                errors:[
+                    {
+                        field: "newPassword",
+                        message: "length must be greater than 2"
+                    }
+            ]}
+        }
+        const user = await em.findOne(User,{email: email})
+        if (!user) {
+            return {
+                errors:[
+                    {
+                        field: "email",
+                        message: "User doesn't exist"
+                    }
+                ]
+            }
+        }
+        const hashedPassword: string = await argon2.hash(newPassword)
+        user.password = hashedPassword
+        em.persistAndFlush(user)
+        return { user }
     }
 }

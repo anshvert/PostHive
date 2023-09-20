@@ -21,3 +21,23 @@ export const LOGIN_MUT = `
         }
       }
     }`
+export const FORGOTPASSWORD_MUT = `
+    mutation ForgotPassword($email: String!) {
+      forgotPassword(email: $email) {
+        user {
+          id
+        }
+      }
+    }`
+export const CHANGEPASSWORD_MUT = `
+    mutation ChangePassword($token: String!, $newPassword: String!, $email: String!) {
+      changePassword(token: $token, newPassword: $newPassword, email: $email){
+        user {
+          id
+        }
+        errors {
+          field
+          message
+        }
+      }
+    }`
