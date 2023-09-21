@@ -16,8 +16,10 @@ const ForgotPassword: React.FC<{}> = ({}) => {
         const response = await(forgotPassword(userData))
         if (response.data?.forgotPassword.errors?.length) {
             alert(`${response.data?.login.errors[0].message}`)
+            return
         } else if (!response.data) {
             alert(`Something went Wrong !!`)
+            return
         } else {
             await router.push("/")
         }

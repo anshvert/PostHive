@@ -13,25 +13,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
-const core_1 = require("@mikro-orm/core");
-const micro_orm_config_1 = __importDefault(require("./micro-orm.config"));
 const express_1 = __importDefault(require("express"));
 const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
 const hello_1 = require("./resolvers/hello");
 const post_1 = require("./resolvers/post");
 const user_1 = require("./resolvers/user");
+const typeorm_1 = require("typeorm");
+const User_1 = require("./entities/User");
+const Post_1 = require("./entities/Post");
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    const orm = yield core_1.MikroORM.init(micro_orm_config_1.default);
-    yield orm.getMigrator().up();
-    const ormFork = orm.em.fork();
+    const AppDataSource = new typeorm_1.DataSource({
+        type: "postgres",
+        host: "localhost",
+        port: 5432,
+        username: "postgres",
+        password: "ansh2222",
+        database: "posthive",
+        entities: [User_1.User, Post_1.Post],
+        synchronize: true,
+        logging: true,
+    });
+    AppDataSource.initialize()
+        .then(() => {
+        console.log("Iniliased typeorm");
+    })
+        .catch((error) => console.log(error));
     const app = (0, express_1.default)();
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: yield (0, type_graphql_1.buildSchema)({
             resolvers: [hello_1.HelloResolver, post_1.PostResolver, user_1.UserResolver],
             validate: false,
         }),
-        context: ({ req, res }) => ({ em: ormFork, req, res })
+        context: ({ req, res }) => ({ dataSource: AppDataSource, req, res })
     });
     yield apolloServer.start();
     apolloServer.applyMiddleware({ app });

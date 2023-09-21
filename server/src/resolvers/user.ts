@@ -36,7 +36,7 @@ export class UserResolver {
     @Mutation(() => UserResponse)
     async register(
         @Arg('options') options: UsernamePasswordInput,
-        @Ctx() { em }: MyContext
+        @Ctx() { dataSource } : any
     ): Promise<UserResponse> {
         if (options.username.length <= 2) {
             return {
@@ -55,16 +55,23 @@ export class UserResolver {
             }
         }
         const hashedPassword: string = await argon2.hash(options.password)
-        const user: User = em.create(User,{ username: options.username, password: hashedPassword,email: options.email} as User)
-        await em.persistAndFlush(user)
+        const result = await dataSource
+            .createQueryBuilder()
+            .insert()
+            .into(User)
+            .values(
+                { username: options.username, password: hashedPassword, "email": options.email },
+            )
+            .returning("*")
+            .execute()
+        const user = result.raw[0]
         return {user}
     }
     @Mutation(() => UserResponse)
     async login(
         @Arg('options') options: UsernamePasswordInput,
-        @Ctx() {em}: MyContext
     ): Promise<UserResponse> {
-        const user = await em.findOne(User,{username: options.username })
+        const user = await User.findOne({where : {username:options.username}})
         if (!user) {
             return {
                 errors: [{
@@ -82,15 +89,13 @@ export class UserResolver {
                 }]
             }
         }
-        //req.session.userId = user.id
         return {user}
     }
     @Mutation(() => UserResponse)
     async forgotPassword(
         @Arg('email') email: string,
-        @Ctx() {em}: MyContext
     ): Promise<UserResponse> {
-        const user = await em.findOne(User,{email: email})
+        const user = await User.findOne({where: {email}})
         if (!user) {
             return {
                 errors: [
@@ -110,9 +115,7 @@ export class UserResolver {
     async changePassword(
         @Arg('email') email: string,
         @Arg('newPassword') newPassword: string,
-        @Arg('token') token: string,
-        @Ctx() {em}: MyContext
-    ): Promise<UserResponse> {
+    ): Promise<UserResponse> { 
         if (newPassword.length <= 2) {
             return {
                 errors:[
@@ -122,7 +125,7 @@ export class UserResolver {
                     }
             ]}
         }
-        const user = await em.findOne(User,{email: email})
+        const user = await User.findOne({where:{email}})
         if (!user) {
             return {
                 errors:[
@@ -134,8 +137,7 @@ export class UserResolver {
             }
         }
         const hashedPassword: string = await argon2.hash(newPassword)
-        user.password = hashedPassword
-        em.persistAndFlush(user)
+        await User.update({email:email},{password:hashedPassword})
         return { user }
     }
 }

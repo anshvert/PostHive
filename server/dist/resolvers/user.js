@@ -74,7 +74,7 @@ UserResponse = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], UserResponse);
 let UserResolver = class UserResolver {
-    register(options, { em }) {
+    register(options, { dataSource }) {
         return __awaiter(this, void 0, void 0, function* () {
             if (options.username.length <= 2) {
                 return {
@@ -93,14 +93,20 @@ let UserResolver = class UserResolver {
                 };
             }
             const hashedPassword = yield argon2_1.default.hash(options.password);
-            const user = em.create(User_1.User, { username: options.username, password: hashedPassword, email: options.email });
-            yield em.persistAndFlush(user);
+            const result = yield dataSource
+                .createQueryBuilder()
+                .insert()
+                .into(User_1.User)
+                .values({ username: options.username, password: hashedPassword, "email": options.email })
+                .returning("*")
+                .execute();
+            const user = result.raw[0];
             return { user };
         });
     }
-    login(options, { em }) {
+    login(options) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield em.findOne(User_1.User, { username: options.username });
+            const user = yield User_1.User.findOne({ where: { username: options.username } });
             if (!user) {
                 return {
                     errors: [{
@@ -121,9 +127,9 @@ let UserResolver = class UserResolver {
             return { user };
         });
     }
-    forgotPassword(email, { em }) {
+    forgotPassword(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield em.findOne(User_1.User, { email: email });
+            const user = yield User_1.User.findOne({ where: { email } });
             if (!user) {
                 return {
                     errors: [
@@ -140,7 +146,7 @@ let UserResolver = class UserResolver {
             return { user };
         });
     }
-    changePassword(email, newPassword, token, { em }) {
+    changePassword(email, newPassword) {
         return __awaiter(this, void 0, void 0, function* () {
             if (newPassword.length <= 2) {
                 return {
@@ -152,7 +158,7 @@ let UserResolver = class UserResolver {
                     ]
                 };
             }
-            const user = yield em.findOne(User_1.User, { email: email });
+            const user = yield User_1.User.findOne({ where: { email } });
             if (!user) {
                 return {
                     errors: [
@@ -164,8 +170,7 @@ let UserResolver = class UserResolver {
                 };
             }
             const hashedPassword = yield argon2_1.default.hash(newPassword);
-            user.password = hashedPassword;
-            em.persistAndFlush(user);
+            yield User_1.User.update({ email: email }, { password: hashedPassword });
             return { user };
         });
     }
@@ -182,27 +187,23 @@ __decorate([
 __decorate([
     (0, type_graphql_1.Mutation)(() => UserResponse),
     __param(0, (0, type_graphql_1.Arg)('options')),
-    __param(1, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [UsernamePasswordInput, Object]),
+    __metadata("design:paramtypes", [UsernamePasswordInput]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "login", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => UserResponse),
     __param(0, (0, type_graphql_1.Arg)('email')),
-    __param(1, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "forgotPassword", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => UserResponse),
     __param(0, (0, type_graphql_1.Arg)('email')),
     __param(1, (0, type_graphql_1.Arg)('newPassword')),
-    __param(2, (0, type_graphql_1.Arg)('token')),
-    __param(3, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, Object]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "changePassword", null);
 exports.UserResolver = UserResolver = __decorate([
