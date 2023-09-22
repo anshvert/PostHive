@@ -28,7 +28,7 @@ const main = async (): Promise<void> => {
     })
     .catch((error) => console.log(error))
     const app: Express = express()
-    
+
     const apolloServer: ApolloServer<ExpressContext> = new ApolloServer({
         schema: await buildSchema({
             resolvers: [HelloResolver,PostResolver,UserResolver],

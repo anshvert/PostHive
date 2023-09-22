@@ -24,6 +24,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const Post_1 = require("../entities/Post");
+let PostInput = class PostInput {
+};
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", String)
+], PostInput.prototype, "title", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", String)
+], PostInput.prototype, "text", void 0);
+PostInput = __decorate([
+    (0, type_graphql_1.InputType)()
+], PostInput);
 let PostResolver = class PostResolver {
     posts() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33,9 +46,9 @@ let PostResolver = class PostResolver {
     post(id) {
         return Post_1.Post.findOne({ where: { id } });
     }
-    createPost(title) {
+    createPost(input) {
         return __awaiter(this, void 0, void 0, function* () {
-            return Post_1.Post.create({ title }).save();
+            return Post_1.Post.create(Object.assign(Object.assign({}, input), { creatorId: 1 })).save();
         });
     }
     updatePost(id, title) {
@@ -72,9 +85,9 @@ __decorate([
 ], PostResolver.prototype, "post", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => Post_1.Post),
-    __param(0, (0, type_graphql_1.Arg)("title")),
+    __param(0, (0, type_graphql_1.Arg)("input")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [PostInput]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "createPost", null);
 __decorate([
