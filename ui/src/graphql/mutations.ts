@@ -41,3 +41,13 @@ export const CHANGEPASSWORD_MUT = `
         }
       }
     }`
+export const CREATEPOST_MUT = `
+    mutation CreatePost($title: String!,$text: String!) {
+      createPost(input: {title: $title, text: $text}) {
+        id
+        title
+        createdAt
+        updatedAt
+        creatorId
+      }
+    }`

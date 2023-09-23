@@ -3,6 +3,8 @@ import {POST_QUERY} from "@/graphql/query"
 import {useQuery} from "urql";
 import React from "react";
 import {Post} from "@/interfaces/interfaces";
+import { Link } from "@mui/material";
+import Wrapper from "@/components/Wrapper";
 
 const Home: React.FC = () =>  {
     const [result, reExecuteQuery] = useQuery({
@@ -12,15 +14,24 @@ const Home: React.FC = () =>  {
     return (
         <>
             <NavBar />
-            {fetching && <p>Loading...</p>}
-            {error &&  <p>Oh no... {error.message}</p>}
-            {!error && !fetching &&
-                <ul>
-                    {data.posts.map((post: Post) => (
-                        <li key={post.id}>{post.title}</li>
-                    ))}
-                </ul>
-            }
+            <Wrapper>
+                <>  
+                    {fetching && <p>Loading...</p>}
+                    {error &&  <p>Oh no... {error.message}</p>}
+                    {!error && !fetching && (
+                        <>
+                            <Link href="/create-post" underline="none">
+                                {"Create Post"}
+                            </Link>
+                            <ul>
+                                {data.posts.map((post: Post) => (
+                                    <li key={post.id}>{post.title}</li>
+                                ))}
+                            </ul>
+                        </>
+                    )}
+                </>
+            </Wrapper>
         </>
     );
 }
