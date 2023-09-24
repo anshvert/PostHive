@@ -20,10 +20,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const Post_1 = require("../entities/Post");
+const postgresSource_1 = __importDefault(require("../utils/postgresSource"));
 let PostInput = class PostInput {
 };
 __decorate([
@@ -38,9 +42,19 @@ PostInput = __decorate([
     (0, type_graphql_1.InputType)()
 ], PostInput);
 let PostResolver = class PostResolver {
-    posts() {
+    posts(limit, cursor) {
         return __awaiter(this, void 0, void 0, function* () {
-            return Post_1.Post.find();
+            const realLimit = Math.min(50, limit);
+            const AppDataSource = postgresSource_1.default;
+            const data = AppDataSource
+                .getRepository(Post_1.Post)
+                .createQueryBuilder("postsQuery")
+                .orderBy('"createdAt"', "DESC")
+                .take(realLimit);
+            if (cursor) {
+                data.where('"createdAt" < :cursor', { cursor: cursor });
+            }
+            return data.getMany();
         });
     }
     post(id) {
@@ -72,8 +86,10 @@ let PostResolver = class PostResolver {
 exports.PostResolver = PostResolver;
 __decorate([
     (0, type_graphql_1.Query)(() => [Post_1.Post]),
+    __param(0, (0, type_graphql_1.Arg)('limit', () => type_graphql_1.Int)),
+    __param(1, (0, type_graphql_1.Arg)('cursor', () => String, { nullable: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "posts", null);
 __decorate([

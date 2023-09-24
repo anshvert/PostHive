@@ -1,5 +1,6 @@
-import {Arg, Field, InputType, Mutation, Query, Resolver} from "type-graphql";
+import {Arg, Field, InputType, Int, Mutation, Query, Resolver} from "type-graphql";
 import {Post} from "../entities/Post";
+import dataSource  from "../utils/postgresSource";
 
 @InputType()
 class PostInput {
@@ -12,8 +13,21 @@ class PostInput {
 @Resolver()
 export class PostResolver {
     @Query(() => [Post])
-    async posts(): Promise<Post[]> {
-        return Post.find()
+    async posts(
+        @Arg('limit', () => Int) limit: number,
+        @Arg('cursor', () => String, {nullable: true}) cursor: string | null,
+    ): Promise<Post[]> {
+        const realLimit = Math.min(50,limit)
+        const AppDataSource = dataSource
+        const data = AppDataSource
+        .getRepository(Post)
+        .createQueryBuilder("postsQuery")
+        .orderBy('"createdAt"',"DESC")
+        .take(realLimit)
+        if (cursor) {
+            data.where('"createdAt" < :cursor', { cursor: cursor })
+        }
+        return data.getMany()
     }
 
     @Query(() => Post, {nullable: true})

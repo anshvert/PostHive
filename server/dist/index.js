@@ -19,24 +19,14 @@ const type_graphql_1 = require("type-graphql");
 const hello_1 = require("./resolvers/hello");
 const post_1 = require("./resolvers/post");
 const user_1 = require("./resolvers/user");
-const typeorm_1 = require("typeorm");
-const User_1 = require("./entities/User");
-const Post_1 = require("./entities/Post");
+const postgresSource_1 = __importDefault(require("./utils/postgresSource"));
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    const AppDataSource = new typeorm_1.DataSource({
-        type: "postgres",
-        host: "localhost",
-        port: 5432,
-        username: "postgres",
-        password: "ansh2222",
-        database: "posthive",
-        entities: [User_1.User, Post_1.Post],
-        synchronize: true,
-        logging: true,
-    });
+    const AppDataSource = postgresSource_1.default;
     AppDataSource.initialize()
         .then(() => {
-        console.log("Iniliased typeorm");
+        console.log("Iniliased typeorm !");
+        AppDataSource.runMigrations();
+        console.log("Migrations completed");
     })
         .catch((error) => console.log(error));
     const app = (0, express_1.default)();

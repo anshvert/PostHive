@@ -1,5 +1,5 @@
 import {NavBar} from "@/components/navbar";
-import {POST_QUERY} from "@/graphql/query"
+import {getPosts_QUERY} from "@/graphql/query"
 import {useQuery} from "urql";
 import React from "react";
 import {Post} from "@/interfaces/interfaces";
@@ -7,9 +7,7 @@ import { Link } from "@mui/material";
 import Wrapper from "@/components/Wrapper";
 
 const Home: React.FC = () =>  {
-    const [result, reExecuteQuery] = useQuery({
-        query: POST_QUERY,
-    });
+    const [result, reExecuteQuery] = useQuery({query: getPosts_QUERY, variables: {limit: 10}});
     const { data, fetching, error } = result;
     return (
         <>

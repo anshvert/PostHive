@@ -5,26 +5,16 @@ import {buildSchema} from "type-graphql";
 import {HelloResolver} from "./resolvers/hello";
 import {PostResolver} from "./resolvers/post";
 import {UserResolver} from "./resolvers/user";
-import {DataSource} from 'typeorm'
-import { User } from "./entities/User";
-import { Post } from "./entities/Post";
+import dataSource  from "./utils/postgresSource";
 
 const main = async (): Promise<void> => {
 
-    const AppDataSource = new DataSource({
-        type: "postgres",
-        host: "localhost",
-        port: 5432,
-        username: "postgres",
-        password: "ansh2222",
-        database: "posthive",
-        entities: [User,Post],
-        synchronize: true,
-        logging: true,
-    })
+    const AppDataSource = dataSource
     AppDataSource.initialize()
     .then(() => {
-        console.log("Iniliased typeorm")
+        console.log("Iniliased typeorm !")
+        AppDataSource.runMigrations()
+        console.log("Migrations completed")
     })
     .catch((error) => console.log(error))
     const app: Express = express()
