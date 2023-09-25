@@ -16,7 +16,6 @@ require("reflect-metadata");
 const express_1 = __importDefault(require("express"));
 const apollo_server_express_1 = require("apollo-server-express");
 const type_graphql_1 = require("type-graphql");
-const hello_1 = require("./resolvers/hello");
 const post_1 = require("./resolvers/post");
 const user_1 = require("./resolvers/user");
 const postgresSource_1 = __importDefault(require("./utils/postgresSource"));
@@ -25,14 +24,12 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     AppDataSource.initialize()
         .then(() => {
         console.log("Iniliased typeorm !");
-        AppDataSource.runMigrations();
-        console.log("Migrations completed");
     })
         .catch((error) => console.log(error));
     const app = (0, express_1.default)();
     const apolloServer = new apollo_server_express_1.ApolloServer({
         schema: yield (0, type_graphql_1.buildSchema)({
-            resolvers: [hello_1.HelloResolver, post_1.PostResolver, user_1.UserResolver],
+            resolvers: [post_1.PostResolver, user_1.UserResolver],
             validate: false,
         }),
         context: ({ req, res }) => ({ dataSource: AppDataSource, req, res })

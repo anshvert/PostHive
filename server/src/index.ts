@@ -2,7 +2,6 @@ import "reflect-metadata"
 import express, {Express} from "express"
 import {ApolloServer, ExpressContext} from "apollo-server-express";
 import {buildSchema} from "type-graphql";
-import {HelloResolver} from "./resolvers/hello";
 import {PostResolver} from "./resolvers/post";
 import {UserResolver} from "./resolvers/user";
 import dataSource  from "./utils/postgresSource";
@@ -13,15 +12,13 @@ const main = async (): Promise<void> => {
     AppDataSource.initialize()
     .then(() => {
         console.log("Iniliased typeorm !")
-        AppDataSource.runMigrations()
-        console.log("Migrations completed")
     })
     .catch((error) => console.log(error))
     const app: Express = express()
 
     const apolloServer: ApolloServer<ExpressContext> = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [HelloResolver,PostResolver,UserResolver],
+            resolvers: [PostResolver,UserResolver],
             validate: false,
         }),
         context: ({ req, res }) => ({ dataSource:AppDataSource, req,res})

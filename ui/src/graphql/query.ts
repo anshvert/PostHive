@@ -6,5 +6,6 @@ export const getPosts_QUERY = `
         createdAt
         updatedAt
         creatorId
+        textSnippet
       }
     }`
