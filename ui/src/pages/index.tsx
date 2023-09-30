@@ -26,7 +26,8 @@ const Home: React.FC = () =>  {
                             <Stack spacing={5} mb={5}>
                                 {data.posts.map((post: Post) => (
                                     <Box key={post.id} sx={{boxShadow: 3, padding: 4}}>
-                                        <Typography mt={1} mb={2} sx={{fontWeight:"bold", fontSize: 19}}>{post.title}</Typography>
+                                        <Typography mt={1} mb={2} sx={{fontWeight:"bold", fontSize: 19}}>{post.title}</Typography> 
+                                            Added by {post.creator.username}
                                         <Typography>{post.textSnippet}</Typography>
                                     </Box>
                                 ))}

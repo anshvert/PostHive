@@ -28,6 +28,7 @@ exports.PostResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const Post_1 = require("../entities/Post");
 const postgresSource_1 = __importDefault(require("../utils/postgresSource"));
+const Updoot_1 = require("../entities/Updoot");
 let PostInput = class PostInput {
 };
 __decorate([
@@ -43,21 +44,46 @@ PostInput = __decorate([
 ], PostInput);
 let PostResolver = class PostResolver {
     textSnippet(root) {
-        return root.text.slice(0, 50);
+        return root.text.
+            slice(0, 50);
+    }
+    vote(postId, value, { req }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = '1';
+            yield Updoot_1.Updoot.insert({
+                userId,
+                postId,
+                value
+            });
+            yield postgresSource_1.default.query(`
+                update post
+                set points = points + $1
+                where id = $2
+            `, [value, postId]);
+            return true;
+        });
     }
     posts(limit, cursor) {
         return __awaiter(this, void 0, void 0, function* () {
             const realLimit = Math.min(50, limit);
-            const AppDataSource = postgresSource_1.default;
-            const data = AppDataSource
-                .getRepository(Post_1.Post)
-                .createQueryBuilder("postsQuery")
-                .orderBy('"createdAt"', "DESC")
-                .take(realLimit);
-            if (cursor) {
-                data.where('"createdAt" < :cursor', { cursor: cursor });
-            }
-            return data.getMany();
+            const replacements = [realLimit];
+            if (cursor)
+                replacements.push(cursor);
+            const posts = yield postgresSource_1.default.query(`
+            select p.*,
+            json_build_object(
+                'username',u.username,
+                'id', u.id,
+                'email', u.email,
+                'createdAt', u."createdAt"
+                ) creator
+            from post p
+            inner join public.user u on u.id = p."creatorId"
+            ${cursor ? `where p."createdAt" < $2` : ""}
+            order by p."createdAt" DESC
+            limit $1
+        `, replacements);
+            return posts;
         });
     }
     post(id) {
@@ -94,6 +120,15 @@ __decorate([
     __metadata("design:paramtypes", [Post_1.Post]),
     __metadata("design:returntype", void 0)
 ], PostResolver.prototype, "textSnippet", null);
+__decorate([
+    (0, type_graphql_1.Mutation)(() => Boolean),
+    __param(0, (0, type_graphql_1.Arg)('postId', () => type_graphql_1.Int)),
+    __param(1, (0, type_graphql_1.Arg)('value', () => type_graphql_1.Int)),
+    __param(2, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, Object]),
+    __metadata("design:returntype", Promise)
+], PostResolver.prototype, "vote", null);
 __decorate([
     (0, type_graphql_1.Query)(() => [Post_1.Post]),
     __param(0, (0, type_graphql_1.Arg)('limit', () => type_graphql_1.Int)),

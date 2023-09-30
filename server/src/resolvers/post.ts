@@ -1,6 +1,8 @@
-import {Arg, Field, FieldResolver, InputType, Int, Mutation, Query, Resolver, Root} from "type-graphql";
+import {Arg, Ctx, Field, FieldResolver, InputType, Int, Mutation, Query, Resolver, Root} from "type-graphql";
 import {Post} from "../entities/Post";
 import dataSource  from "../utils/postgresSource";
+import { MyContext } from "src/types";
+import { Updoot } from "../entities/Updoot";
 
 @InputType()
 class PostInput {
@@ -15,25 +17,52 @@ export class PostResolver {
 
     @FieldResolver(() => String)
     textSnippet(@Root() root: Post) {
-        return root.text.slice(0,50)
+        return root.text.
+        slice(0,50)
     }
 
+    @Mutation(() => Boolean)
+     async vote(
+        @Arg('postId', () => Int) postId: number,
+        @Arg('value', () => Int) value: number,
+        @Ctx() {req}: MyContext) {
+            const userId = '1' 
+            await Updoot.insert({
+                userId, 
+                postId,
+                value
+            })
+            await dataSource.query(`
+                update post
+                set points = points + $1
+                where id = $2
+            `,[value,postId])
+            return true
+        }
+        
     @Query(() => [Post])
     async posts(
         @Arg('limit', () => Int) limit: number,
         @Arg('cursor', () => String, {nullable: true}) cursor: string | null,
     ): Promise<Post[]> {
         const realLimit = Math.min(50,limit)
-        const AppDataSource = dataSource
-        const data = AppDataSource
-        .getRepository(Post)
-        .createQueryBuilder("postsQuery")
-        .orderBy('"createdAt"',"DESC")
-        .take(realLimit)
-        if (cursor) {
-            data.where('"createdAt" < :cursor', { cursor: cursor })
-        }
-        return data.getMany()
+        const replacements: any[] = [realLimit]
+        if (cursor) replacements.push(cursor)
+        const posts = await dataSource.query(`
+            select p.*,
+            json_build_object(
+                'username',u.username,
+                'id', u.id,
+                'email', u.email,
+                'createdAt', u."createdAt"
+                ) creator
+            from post p
+            inner join public.user u on u.id = p."creatorId"
+            ${cursor ? `where p."createdAt" < $2`: ""}
+            order by p."createdAt" DESC
+            limit $1
+        `,replacements)
+        return posts
     }
 
     @Query(() => Post, {nullable: true})

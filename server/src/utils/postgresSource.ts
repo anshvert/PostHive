@@ -2,6 +2,7 @@ import { Post } from "../entities/Post";
 import { User } from "../entities/User";
 import { DataSource } from "typeorm";
 import path from "path"
+import { Updoot } from "../entities/Updoot";
 
 const dataSource = new DataSource({
     type: "postgres",
@@ -10,7 +11,7 @@ const dataSource = new DataSource({
     username: "postgres",
     password: "ansh2222",
     database: "posthive",
-    entities: [User,Post],
+    entities: [User,Post,Updoot],
     synchronize: true,
     logging: true,
     migrations: [path.join(__dirname,"../migrations/*")],

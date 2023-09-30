@@ -5,4 +5,8 @@ export interface Post {
     updatedAt: Date,
     text: string,
     textSnippet: string
+    creator: {
+        id: number,
+        username: string
+    }
 }

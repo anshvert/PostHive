@@ -7,5 +7,9 @@ export const getPosts_QUERY = `
         updatedAt
         creatorId
         textSnippet
+        creator {
+          id
+          username
+        }
       }
     }`
