@@ -51,3 +51,7 @@ export const CREATEPOST_MUT = `
         creatorId
       }
     }`
+export const VOTEPOST_MUT = `
+    mutation Vote($value: Int!, $postId: Int!) {
+      vote(value: $value, postId: $postId)
+}`

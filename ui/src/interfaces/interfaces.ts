@@ -4,7 +4,8 @@ export interface Post {
     createdAt: Date,
     updatedAt: Date,
     text: string,
-    textSnippet: string
+    textSnippet: string,
+    points: number,
     creator: {
         id: number,
         username: string

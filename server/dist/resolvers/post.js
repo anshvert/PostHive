@@ -50,11 +50,14 @@ let PostResolver = class PostResolver {
     vote(postId, value, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = '1';
-            yield Updoot_1.Updoot.insert({
-                userId,
-                postId,
-                value
-            });
+            const updoot = Updoot_1.Updoot.findOne({ where: { userId: userId, postId: postId } });
+            if (!updoot) {
+                yield Updoot_1.Updoot.insert({
+                    userId,
+                    postId,
+                    value
+                });
+            }
             yield postgresSource_1.default.query(`
                 update post
                 set points = points + $1
@@ -80,7 +83,7 @@ let PostResolver = class PostResolver {
             from post p
             inner join public.user u on u.id = p."creatorId"
             ${cursor ? `where p."createdAt" < $2` : ""}
-            order by p."createdAt" DESC
+            order by p.points DESC
             limit $1
         `, replacements);
             return posts;

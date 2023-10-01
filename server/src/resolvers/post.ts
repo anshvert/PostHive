@@ -25,13 +25,16 @@ export class PostResolver {
      async vote(
         @Arg('postId', () => Int) postId: number,
         @Arg('value', () => Int) value: number,
-        @Ctx() {req}: MyContext) {
+        @Ctx() {req}: MyContext) { 
             const userId = '1' 
-            await Updoot.insert({
-                userId, 
-                postId,
-                value
-            })
+            const updoot = Updoot.findOne({where: {userId: userId, postId: postId}})
+            if (!updoot){
+                await Updoot.insert({
+                    userId, 
+                    postId,
+                    value
+                })
+            }
             await dataSource.query(`
                 update post
                 set points = points + $1
@@ -59,7 +62,7 @@ export class PostResolver {
             from post p
             inner join public.user u on u.id = p."creatorId"
             ${cursor ? `where p."createdAt" < $2`: ""}
-            order by p."createdAt" DESC
+            order by p.points DESC
             limit $1
         `,replacements)
         return posts

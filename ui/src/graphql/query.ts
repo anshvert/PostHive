@@ -7,6 +7,7 @@ export const getPosts_QUERY = `
         updatedAt
         creatorId
         textSnippet
+        points
         creator {
           id
           username
