@@ -6,29 +6,31 @@ This project is a Reddit-inspired web application built using modern web technol
 
 ## Technologies Used
 
-- React
+- Next.js
 - TypeScript
 - GraphQL
-- URQL/Apollo
+- URQL
 - Node.js
 - PostgreSQL
-- MikroORM/TypeORM
+- TypeORM
 - Redis
 - Next.js
 - TypeGraphQL
-- Chakra UI
+- MUI(Material UI)
+
+![image](https://github.com/anshvert/PostHive/assets/53685410/450533fd-4449-4790-a902-be9f2ce7983e)
 
 ## Features
 
 - **Full-Stack Development:** The application demonstrates proficiency in both front-end and back-end development using a comprehensive tech stack.
 
-- **Scalable Database:** Utilizes PostgreSQL along with advanced ORMs (MikroORM/TypeORM) to manage structured data efficiently.
+- **Scalable Database:** Utilizes PostgreSQL along with advanced ORM like TypeORM to manage structured data efficiently.
 
 - **Real-Time Updates:** Implements real-time features using WebSocket technology, enhancing user engagement and interactivity.
 
 - **GraphQL API:** Provides a flexible and efficient GraphQL API for data retrieval, optimizing user experience.
 
-- **User Interface:** Offers a responsive and intuitive user interface developed with Next.js and Chakra UI for a smooth user experience.
+- **User Interface:** Offers a responsive and intuitive user interface developed with Next.js and MUI for a smooth user experience.
 
 - **Authentication and Authorization:** Ensures secure access to user-specific data and features through robust authentication and authorization systems.
 
