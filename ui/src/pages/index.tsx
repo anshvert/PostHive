@@ -6,6 +6,7 @@ import {Post} from "@/interfaces/interfaces";
 import { Box, Button, Link, Stack, Typography, Container } from "@mui/material";
 import Wrapper from "@/components/Wrapper";
 import Upvote from "@/components/Upvote";
+import NextLink from "next/link"
 
 const Home: React.FC = () =>  {
     const [result, reExecuteQuery] = useQuery({query: getPosts_QUERY, variables: {limit: 10}});
@@ -30,7 +31,13 @@ const Home: React.FC = () =>  {
                                         <div style={{display:"flex"}}>
                                             <Upvote post={post}/>
                                             <Container>
-                                                <Typography mt={1} mb={2} sx={{fontWeight:"bold", fontSize: 19}}>{post.title}</Typography> 
+                                                <Typography mt={1} mb={2} sx={{fontWeight:"bold", fontSize: 19}}>
+                                                    <NextLink href="/post/[id]" as={`/post/${post.id}`}>
+                                                        <Link>                                                    
+                                                            {post.title}
+                                                        </Link>
+                                                    </NextLink>
+                                                </Typography> 
                                                     Added by {post.creator.username}
                                                 <Typography>{post.textSnippet}</Typography>
                                             </Container>

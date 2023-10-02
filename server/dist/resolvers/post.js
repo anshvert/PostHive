@@ -90,7 +90,7 @@ let PostResolver = class PostResolver {
         });
     }
     post(id) {
-        return Post_1.Post.findOne({ where: { id } });
+        return Post_1.Post.findOne({ where: { id }, relations: ["creator"] });
     }
     createPost(input) {
         return __awaiter(this, void 0, void 0, function* () {

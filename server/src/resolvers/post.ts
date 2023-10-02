@@ -72,8 +72,8 @@ export class PostResolver {
     post(
         @Arg("id") id: number,
     ): Promise<Post | null> {
-        return Post.findOne({where:{id}})
-    }
+        return Post.findOne({where:{id},relations:["creator"]})
+    }   
 
     @Mutation(() => Post)
     async createPost(
