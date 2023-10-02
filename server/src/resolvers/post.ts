@@ -25,7 +25,7 @@ export class PostResolver {
      async vote(
         @Arg('postId', () => Int) postId: number,
         @Arg('value', () => Int) value: number,
-        @Ctx() {req}: MyContext) { 
+        ) { 
             const userId = '1' 
             const updoot = Updoot.findOne({where: {userId: userId, postId: postId}})
             if (!updoot){

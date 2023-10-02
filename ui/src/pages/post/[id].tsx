@@ -17,7 +17,7 @@ const Post = ({}) => {
             {fetching ? (
                 <>
                     <Box>
-                        Loading .. 
+                        Loading Post ... Please be Patient
                     </Box> 
                 </>
                 ) : (

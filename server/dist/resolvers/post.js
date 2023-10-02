@@ -47,7 +47,7 @@ let PostResolver = class PostResolver {
         return root.text.
             slice(0, 50);
     }
-    vote(postId, value, { req }) {
+    vote(postId, value) {
         return __awaiter(this, void 0, void 0, function* () {
             const userId = '1';
             const updoot = Updoot_1.Updoot.findOne({ where: { userId: userId, postId: postId } });
@@ -127,9 +127,8 @@ __decorate([
     (0, type_graphql_1.Mutation)(() => Boolean),
     __param(0, (0, type_graphql_1.Arg)('postId', () => type_graphql_1.Int)),
     __param(1, (0, type_graphql_1.Arg)('value', () => type_graphql_1.Int)),
-    __param(2, (0, type_graphql_1.Ctx)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, Object]),
+    __metadata("design:paramtypes", [Number, Number]),
     __metadata("design:returntype", Promise)
 ], PostResolver.prototype, "vote", null);
 __decorate([
